@@ -1,0 +1,13 @@
+WITH Adjusted_Cases AS (
+    SELECT Time_HRS,
+           CASE
+               WHEN Day_Of_Week_Closed IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday') THEN Time_HRS * 0.78
+               ELSE Time_HRS
+           END AS Adjusted_Time_HRS
+    FROM WinCo
+)
+
+SELECT 
+    AVG(Time_HRS) AS Original_Avg_Time_HRS,
+    AVG(Adjusted_Time_HRS) AS Adjusted_Avg_Time_HRS
+FROM Adjusted_Cases;
