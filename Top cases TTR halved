@@ -1,0 +1,21 @@
+WITH Top_Cases AS (
+    -- Select the top 100 cases by Time_HRS
+    SELECT Time_HRS
+    FROM WinCo
+    ORDER BY Time_HRS DESC
+    LIMIT 250
+),
+Adjusted_Cases AS (
+    -- Apply the adjustment: halve Time_HRS for the top 100 cases and leave others unchanged
+    SELECT Time_HRS,
+           CASE
+               WHEN Time_HRS IN (SELECT Time_HRS FROM Top_Cases) THEN Time_HRS / 2
+               ELSE Time_HRS
+           END AS Adjusted_Time_HRS
+    FROM WinCo
+)
+-- Calculate the original and adjusted average Time_HRS across all cases
+SELECT 
+    AVG(Time_HRS) AS Original_Avg_Time_HRS,
+    AVG(Adjusted_Time_HRS) AS Adjusted_Avg_Time_HRS
+FROM Adjusted_Cases;
