@@ -1,0 +1,14 @@
+WITH Adjusted_Cases AS (
+    SELECT Time_HRS,
+           CASE
+               WHEN Location = 'Orlando, FL, USA' THEN Time_HRS * 0.65
+               WHEN Location = 'Santa Clara, CA, USA (Jay Street)' THEN Time_HRS * 0.65
+               ELSE Time_HRS
+           END AS Adjusted_Time_HRS
+    FROM WinCo
+)
+
+SELECT 
+    AVG(Time_HRS) AS Original_Avg_Time_HRS,
+    AVG(Adjusted_Time_HRS) AS Adjusted_Avg_Time_HRS
+FROM Adjusted_Cases;
