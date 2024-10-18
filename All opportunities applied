@@ -1,0 +1,31 @@
+WITH Top_Cases AS (
+    SELECT Time_HRS
+    FROM WinCo
+    ORDER BY Time_HRS DESC
+    LIMIT 500
+),
+Adjusted_Cases AS (
+    SELECT Time_HRS,
+           Time_HRS *
+           CASE
+               -- Apply the location adjustment
+               WHEN Location = 'Orlando, FL, USA' OR Location = 'Santa Clara, CA, USA (Jay Street)' THEN 0.9
+               ELSE 1
+           END *
+           CASE
+               -- Apply the top 500 cases adjustment (if it belongs to top cases)
+               WHEN Time_HRS IN (SELECT Time_HRS FROM Top_Cases) THEN 0.85
+               ELSE 1
+           END *
+           CASE
+               -- Apply the day of the week adjustment
+               WHEN Day_Of_Week_Opened IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday') THEN 0.9
+               ELSE 1
+           END AS Adjusted_Time_HRS
+    FROM WinCo
+)
+
+SELECT 
+    AVG(Time_HRS) AS Original_Avg_Time_HRS,
+    AVG(Adjusted_Time_HRS) AS Adjusted_Avg_Time_HRS
+FROM Adjusted_Cases;
